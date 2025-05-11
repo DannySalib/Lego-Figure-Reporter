@@ -1,10 +1,8 @@
 from dash import Dash, dcc, html, Input, Output, State, callback, no_update, callback_context
+from SceneBuilder import SceneBuilder
 
-from InteractiveModel import InteractiveModel
-from Model import Model
-
-#scene_builder = SceneBuilder(texture_path='Lego Figure Images\lego-cowboy-figure.png')
-interactive_model = InteractiveModel(Model())
+scene_builder = SceneBuilder()
+interactive_model = scene_builder.interactive_model
 
 in_preview_mode: bool = False
 preview_mode_text = lambda in_preview_mode: 'Preview Mode: On' if in_preview_mode else 'Preview Mode: Off'
