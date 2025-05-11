@@ -7,7 +7,7 @@ from TextureMapper import TextureMapper
 class SceneBuilder:
     def __init__(
         self,
-        model_path: str = './Lego 3D Objects/lego_man.glb',
+        model_path: str = './assets/lego_man.glb',
         texture_path: Optional[str] = None
     ):
         self.model = Model(model_path)

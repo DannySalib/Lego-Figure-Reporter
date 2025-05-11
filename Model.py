@@ -40,14 +40,15 @@ class Model:
             margin=dict(l=0, r=0, b=0, t=30)
         )
 
-    def update_mesh(self, mesh: go.Mesh3d) -> None:
+    def get_mesh(self) -> go.Mesh3d:
+        return self.__mesh
+    
+    def update_figure(self, mesh: go.Mesh3d):
         if not isinstance(mesh, go.Mesh3d):
             raise TypeError('Mesh must be a go.Mesh3d type')
         
         self.__mesh = mesh
-
-    def get_mesh(self) -> go.Mesh3d:
-        return self.__mesh
+        self.figure = go.Figure(data=[self.__mesh])
     
     def get_mesh_data(self):
         return self.__mesh_data
