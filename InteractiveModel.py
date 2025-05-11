@@ -1,8 +1,8 @@
 import plotly.graph_objects as go
 import numpy as np
 from typing import Optional, Tuple
-from LegoModel import LegoModel
-from ModelUpdater import ModelUpdater
+from Model import Model
+from InteractiveModelUpdater import InteractiveModelUpdater
 
 class InteractiveModel:
 
@@ -11,8 +11,8 @@ class InteractiveModel:
     default_highlighted_point_size = default_point_size * 2
     default_highlighted_point_color = 'green'
 
-    def __init__(self, lego_model: LegoModel):
-        self.__lego_model = lego_model
+    def __init__(self, model: Model):
+        self.__model = model
         
         # Initialize scatter trace with numpy arrays for better performance      
         self.points = go.Scatter3d(
@@ -34,12 +34,14 @@ class InteractiveModel:
         self.coord_dict: dict[Tuple[float, float, float], int] = {}
         
         # Set up figure
-        self.figure = self.__lego_model.get_figure()
+        self.figure = self.__model.figure
         self.figure.add_trace(self.points)
-        self.updater = ModelUpdater(self)
 
-    def get_lego_model(self) -> LegoModel:
-        return self.__lego_model
+        # Initialize Updater 
+        self.updater = InteractiveModelUpdater(self)
+
+    def get_lego_model(self) -> Model:
+        return self.__model
 
     def clear_points(self) -> None:
         """Clear all points"""
@@ -111,3 +113,9 @@ class InteractiveModel:
             # Update the trace
             self.points.marker.color = new_colors
             self.points.marker.size = new_sizes
+
+    def refresh_model(self, model: Model) -> None:
+        """Update the figure with a new LegoModel."""
+        self.figure.data = [model.get_mesh()]  # Replace the mesh
+        # Re-add points or other traces if needed
+        self.figure.add_trace(self.points)

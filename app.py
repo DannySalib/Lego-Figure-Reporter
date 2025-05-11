@@ -1,28 +1,36 @@
 from dash import Dash, dcc, html, Input, Output, State, callback, no_update, callback_context
-from LegoModel import LegoModel 
-from InteractiveModel import InteractiveModel
 
-lego_model = LegoModel()
-interactive_model = InteractiveModel(lego_model)
+from InteractiveModel import InteractiveModel
+from Model import Model
+
+#scene_builder = SceneBuilder(texture_path='Lego Figure Images\lego-cowboy-figure.png')
+interactive_model = InteractiveModel(Model())
 
 in_preview_mode: bool = False
 preview_mode_text = lambda in_preview_mode: 'Preview Mode: On' if in_preview_mode else 'Preview Mode: Off'
-app = Dash()
+
+app = Dash(__name__)
 
 app.layout = html.Div([
+
     html.H1("3D Lego Model Viewer - Interactive"),
+
     html.H3(preview_mode_text(in_preview_mode), id='preview-mode-text'),
+
     html.Button('Toggle Preview Mode', id='preview-toggle'),
+
     dcc.Graph(
         id='3d-model-viewer',
         figure=interactive_model.figure,
         style={'height': '80vh'}
     ),
+
     html.Div([
         html.P("Click on the model to place a marker and see coordinates."),
         html.Div(id='click-data'),
         html.Button('Clear Markers', id='clear-button', n_clicks=0)
     ], style={'margin-top': '20px'})
+
 ])
 
 @callback(
