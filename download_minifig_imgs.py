@@ -8,8 +8,10 @@ from logging import info as print # LMAO
 import logging
 from PIL import Image 
 import numpy as np
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from tqdm import tqdm 
 
+from ImagePreProcessor import ImagePreprocessor
 PREFIX: str = ">>"
 # setup prefix >> for pretty STDOUT (i overode print) (its my project)
 logging.basicConfig(format=f'{PREFIX} %(message)s', level=logging.INFO)
@@ -24,7 +26,7 @@ MINIFIG_DATA_PATH: str = "./minifigs"
 # we shouldnt redownload it that's a waste of time 
 downloaded: set[str] = set() 
 
-def run() -> None:
+def main() -> None:
     # look for minifigs.csv in current directory 
     # if we havent found one, unzip it from online
     if not os.path.exists(CSV_PATH):
@@ -60,9 +62,14 @@ def run() -> None:
         ]
     ).to_numpy()
 
-    with ThreadPoolExecutor(max_workers=os.cpu_count() or 4) as executor:
-        executor.map(lambda d: download(*d), data)
-
+    with tqdm(total=len(data)) as pbar:
+        with ThreadPoolExecutor(max_workers=os.cpu_count() or 4) as executor:
+            futures = executor.map(lambda d: download(*d), data)
+            [pbar.update(1) for _ in futures]
+    
+    # cleanup 
+    # os.removedirs(CSV_PATH)
+    
     print('Finished!')
 
 def download(fig_id: str, url: str) -> None:
@@ -75,12 +82,12 @@ def download(fig_id: str, url: str) -> None:
     if response.status_code != 200:
         return # silent skip if we hit something like 404 not found 
     
-    img = Image.open(BytesIO(response.content))
-    # Resize the image (e.g., to 64x64 pixels)
-    img = img.resize((64, 64), Image.Resampling.LANCZOS)
-
-    # Save with reduced quality to minimize file size
-    img.save(f'{MINIFIG_DATA_PATH}/{fig_id}.jpg', 'JPEG', quality=85, optimize=True)
+    try:
+        img = Image.open(BytesIO(response.content))
+        img = ImagePreprocessor.format(img)
+        ImagePreprocessor.save_to(img, f'{MINIFIG_DATA_PATH}/{fig_id}.jpg')
+    except OSError:
+        return # OSError: cannot write mode RGBA as JPEG
             
 if __name__ == '__main__':
-    run()
+    main()

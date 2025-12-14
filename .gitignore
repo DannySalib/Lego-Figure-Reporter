@@ -1,0 +1,5 @@
+minifigs/
+.venv/
+scans/
+minifigs.csv
+.env
