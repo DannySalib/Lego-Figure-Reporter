@@ -6,6 +6,7 @@ import hashlib
 import time 
 from datetime import datetime
 from PIL import Image
+import subprocess
 
 from ImagePreProcessor import ImagePreprocessor
 
@@ -77,6 +78,8 @@ def main():
         
         img_idx += 1
         time.sleep(1)
+    
+    
 
     cap.release()
     cv2.destroyAllWindows()

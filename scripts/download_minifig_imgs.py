@@ -18,8 +18,8 @@ logging.basicConfig(format=f'{PREFIX} %(message)s', level=logging.INFO)
 
 # url to rebrickable's minifig csv 
 URL: str = "https://cdn.rebrickable.com/media/downloads/minifigs.csv.zip?1765350724.8110726"
-CSV_PATH: str = "./minifigs.csv"
-MINIFIG_DATA_PATH: str = "./minifigs"
+CSV_PATH: str = "../minifigs.csv"
+MINIFIG_DATA_PATH: str = "../minifigs"
 
 # an optimization to consider
 # what if we already have some figures downloaded? 
