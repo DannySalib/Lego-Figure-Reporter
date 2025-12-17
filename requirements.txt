@@ -6,4 +6,4 @@ dotenv
 opencv-python
 plotly
 trimesh
-pycolmap
+open3d
